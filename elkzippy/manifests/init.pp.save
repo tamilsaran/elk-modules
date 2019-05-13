@@ -1,0 +1,111 @@
+class elkzippy
+{
+if $::osfamily == 'RedHat' {
+include java
+exec {'epel-ralease':
+	command => '/usr/bin/yum install -y epel-release'
+}
+exec {'net-tools':
+        command => '/usr/bin/yum install -y net-tools'
+}
+exec {'wget':
+        command => '/usr/bin/yum install -y wget'
+}
+exec {'key':
+        command => '/usr/bin/rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+}
+exec {'elasticsearch':
+        command => '/usr/bin/wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.4.rpm'
+}
+exec {'elasticsearchextrat':
+        command => '/usr/bin/rpm -ivh elasticsearch-6.2.4.rpm'
+}
+file { "/etc/elasticsearch/elasticsearch.yml":
+       ensure   => 'file',
+       mode     => "0644",
+       owner    => 'root',
+       group    => 'root',
+       source   => 'puppet:///modules/elkzippy/elasticsearch.yml',
+}
+file { "/usr/lib/systemd/system/elasticsearch.service":
+      ensure  => 'file',
+       mode   => "0644",
+       owner  => 'root',
+       group  => 'root',
+       source => 'puppet:///modules/elkzippy/elasticsearch.service',
+}
+file { "/etc/sysconfig/elasticsearch":
+      ensure  => 'file',
+       mode   => "0644",
+       owner  => 'root',
+       group  => 'root',
+       source => 'puppet:///modules/elkzippy/elasticsearch',
+}
+exec {'daemon':
+        command => '/usr/bin/systemctl daemon-reload'
+}
+exec {'enable':
+        command => '/usr/bin/systemctl enable elasticsearch'
+}
+exec {'start':
+        command => '/usr/bin/systemctl start elasticsearch'
+}
+exec {'restart':
+        command => '/usr/bin/systemctl restart elasticsearch'
+}
+exec {'kibanainstall':
+        command => '/usr/bin/wget https://artifacts.elastic.co/downloads/kibana/kibana-6.2.4-x86_64.rpm'
+}
+exec {'kibanextract':
+        command => '/usr/bin/rpm -ivh kibana-6.2.4-x86_64.rpm'
+}
+file { "/etc/kibana/kibana.yml":
+      ensure  => 'file',
+       mode   => "0644",
+       owner  => 'root',
+       group  => 'root',
+       source => 'puppet:///modules/elkzippy/kibana.yml',
+}
+exec {'kibanenable':
+        command => '/usr/bin/systemctl enable kibana'
+}
+
+exec {'kibanstart':
+        command => '/usr/bin/systemctl start kibana'
+}
+exec {'kibanrestart':
+        command => '/usr/bin/systemctl restart kibana'
+}
+exec {'logstash':
+        command => '/usr/bin/wget https://artifacts.elastic.co/downloads/logstash/logstash-6.2.4.rpm'
+}
+exec {'logstashextract':
+        command => '/usr/bin/rpm -ivh logstash-6.2.4.rpm'
+}
+exec {'logenable':
+        command => '/usr/bin/systemctl enable logstash'
+}
+exec {'logstart':
+        command => '/usr/bin/systemctl start logstash'
+}
+exec {'logrestart':
+        command => '/usr/bin/systemctl restart logstash'
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
